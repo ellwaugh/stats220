@@ -1,0 +1,170 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Shrikhand&display=swap');
+
+h1{
+font-family: "Shrikhand", serif;
+font-size: 2.5em;
+}
+img{
+    border-style: solid;
+    border-width: 5px;
+    border-color: #F2B5D4;
+    border-radius: 20px;
+}
+h2{
+font-family: "Shrikhand", serif;
+
+}
+p{
+    font-family: "Quicksand", sans-serif;
+}
+body {
+  background-image: linear-gradient(#FFFFFF,#EFF7F6, #30BCED);
+} 
+```
+
+# Auckland Transport Punctuality
+
+I normally take public transport into University, I would like to know on average how delayed the transport is and if different modes of public transport have more delay compared to others. 
+
+Note: I did not take all of the trips, some were taken by friends and some I just logged from looking at the signs at the stops.
+
+```{r}
+library(tidyverse)
+# reading in the csv into logged data
+
+csv_file <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vThmBZ64dA12eqXns5uIpIwGp0geQ3BTaVLhnifiGhNVvAUQj6ev5uUhdsDh8FdAFLt1mrxYrsW33oY/pub?output=csv"
+logged_data <- read_csv(csv_file)
+
+# Renaming the variables in the data frame latest_data
+
+latest_data <- logged_data %>%
+  rename(transport_type = 2,
+         transport_time = 3,
+         transport_delay = 4)
+# Summary Values
+
+# Finding the mean of transport_delay
+mean_delay <- round(mean(latest_data$transport_delay), 2)
+
+# Finding the maximum amount of delay
+
+max_delay <- max(latest_data$transport_delay)
+
+# A Bar Chart showing the different types of public transport taken
+transport_taken <-
+ggplot(data = latest_data) +
+  geom_bar(aes(x = transport_type,
+           fill = transport_type)) +
+  labs(title = "What Kind of Public Transport are people taking?", 
+       subtitle = "The different kinds of public transport are using in auckland from my survey",
+       y = "Trips Taken",
+       x = "Types of Transport") +
+  scale_fill_manual(values = c("#F2B5D4","#AF125A", "#30BCED"))
+
+# A Bar Chart of the delay in minutes, by what transport was taken
+bar_chart1 <-
+ggplot(data = latest_data) + 
+  geom_bar(aes(x = transport_delay, fill = transport_type)) +
+  labs(title = "Are different types of public Transport more Reliable?",
+       subtitle = "Comparing the delay and the types of transport in Auckland",
+       x = "Delay in minutes",
+       y = "Number of Trips") +
+    scale_fill_manual(values = c("#F2B5D4","#AF125A", "#30BCED"))
+
+
+```
+
+## Overall Delay
+Overall the average amount of delay in minutes for the trips I recorded was `r mean_delay`, The max amount of delay is `r max_delay` minutes. In a bar chart it looks like this:
+
+```{r}
+overall_lateness <- 
+  ggplot(data = latest_data) + 
+  geom_bar(aes(x = transport_delay), fill = "#F2B5D4") + 
+  labs(title = "Delay of all transport taken", 
+       x = "Delay in minutes", 
+       y = "Frequency")
+
+overall_lateness
+
+bus_df <- latest_data %>% filter(transport_type == "Bus")
+bus_mean <- round(mean(bus_df$transport_delay),2)
+
+# finding the mean of the trains 
+train_df <- latest_data %>% filter(transport_type == "Train")
+train_mean <- round(mean(train_df$transport_delay), 2)
+
+```
+
+## Delay by type of Transport
+
+I also wanted to know what type of public transport is the most reliable. The mean for buses was `r bus_mean` minutes compared to the mean of trains being `r train_mean` minutes late. An easier way to see this is through the bar chart below
+
+```{r}
+ggplot(data = latest_data) + 
+  geom_bar(aes(x = transport_delay, fill = transport_type)) +
+  labs(title = "Are different types of public Transport more Reliable?",
+       subtitle = "Comparing the delay and the types of transport in Auckland",
+       x = "Delay in minutes",
+       y = "Number of Trips") +
+  scale_fill_manual(values = c("#F2B5D4","#AF125A", "#30BCED"))
+
+```
+
+However this data may not be entirely accurate as there was a difference in how many trips taken I recorded on each Transport type, This most likely skews the data. 
+
+```{r}
+transport_taken
+
+morning_mean <- latest_data %>% 
+  filter(transport_time == "1 - 10") %>%
+  pull(transport_delay) %>%
+  mean %>%
+  round(2)
+
+midday_mean <- latest_data %>%
+  filter(transport_time == "10 - 4") %>%
+  pull(transport_delay) %>% 
+  mean %>%
+  round(2)
+
+evening_mean <- latest_data %>%
+  filter(transport_time == "4 - 10") %>%
+  pull(transport_delay) %>%
+  mean %>%
+  round(2)
+
+
+```
+
+## Does the time of day effect how delayed the Transport is?
+Another thing I wanted to see was if depending on the time of day would there be more or less delay.
+
+```{r}
+paste0("The mean delay for morning (1am to 10am) is ", morning_mean, " The mean delay for midday(10 am to 4pm) is ", midday_mean, " and the evening(4pm to 10pm) mean is ", evening_mean, ".")
+
+lateness_time <-
+ggplot(data = latest_data) +
+  geom_bar(aes(x = transport_delay, fill = transport_time)) +
+  labs(title = "Does the time of day effect delay?",
+       subtitle = "Amount of Delay in minutes by what time of day the trip was taken", 
+       x = "Amount of delay in minutes",
+       y = "Trips Taken") +
+  scale_fill_manual(values = c("#F2B5D4","#AF125A", "#30BCED"))
+
+
+lateness_time
+```
+
+
