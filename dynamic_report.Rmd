@@ -35,6 +35,35 @@ body {
 
 # Auckland Transport Punctuality
 
+```{r}
+library(magick)
+draketop <- image_read("https://pinkappicons.com/wp-content/uploads/2025/02/Drake-Meme-Background.webp") %>%
+  image_scale(150)
+drakebottom <- image_read("https://i.pinimg.com/474x/77/11/c7/7711c7a8749bd065736d815636fbdc0e.jpg") %>%
+  image_scale(150)
+top_text <- image_blank(width = 150, height = 150, color = "#FFFFFF") %>%
+  image_annotate(text = "When the bus is on time",
+                 color = "#000000",
+                 size = 10,
+                 font = "Impact",
+                 gravity = "center")
+bottom_text <- image_blank(width = 150, height = 150, color = "#FFFFFF") %>%
+  image_annotate(text = "When the bus is late (I'm later)",
+                 color = "#000000",
+                 size = 10,
+                 font = "Impact",
+                 gravity = "center")
+top <- c(draketop, top_text)
+bottom <- c(drakebottom, bottom_text)
+
+top_half <- image_append(top)
+bottom_half <- image_append(bottom)
+
+full <- c(top_half, bottom_half)
+image_append(full, stack = TRUE)
+
+```
+
 I normally take public transport into University, I would like to know on average how delayed the transport is and if different modes of public transport have more delay compared to others. 
 
 Note: I did not take all of the trips, some were taken by friends and some I just logged from looking at the signs at the stops.
@@ -43,14 +72,14 @@ Note: I did not take all of the trips, some were taken by friends and some I jus
 library(tidyverse)
 # reading in the csv into logged data
 
-csv_file <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vThmBZ64dA12eqXns5uIpIwGp0geQ3BTaVLhnifiGhNVvAUQj6ev5uUhdsDh8FdAFLt1mrxYrsW33oY/pub?output=csv"
+csv_file <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSA1a1fbEtYfXj_LkrPJWSFMpgwpU4ODaPZR04mag5kAhSCHrvzqkdHhZL8N3UejqE8wYRZhSp9J3AF/pub?output=csv"
 logged_data <- read_csv(csv_file)
 
 # Renaming the variables in the data frame latest_data
 
 latest_data <- logged_data %>%
-  rename(transport_type = 2,
-         transport_time = 3,
+  rename(transport_type = 3,
+         transport_time = 2,
          transport_delay = 4)
 # Summary Values
 
@@ -128,19 +157,19 @@ However this data may not be entirely accurate as there was a difference in how 
 transport_taken
 
 morning_mean <- latest_data %>% 
-  filter(transport_time == "1 - 10") %>%
+  filter(transport_time == "Morning (1am - 10am)") %>%
   pull(transport_delay) %>%
   mean %>%
   round(2)
 
 midday_mean <- latest_data %>%
-  filter(transport_time == "10 - 4") %>%
+  filter(transport_time == "Miday (10am - 4pm)") %>%
   pull(transport_delay) %>% 
   mean %>%
   round(2)
 
 evening_mean <- latest_data %>%
-  filter(transport_time == "4 - 10") %>%
+  filter(transport_time == "Evening (4pm - 11pm)") %>%
   pull(transport_delay) %>%
   mean %>%
   round(2)
