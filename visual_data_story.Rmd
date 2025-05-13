@@ -1,0 +1,107 @@
+---
+title: What Causes Delay on Auckland Transport
+author: Ellie
+subtitle: My experience with the tardiness of Auckland Transport
+output: html_document
+---
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+```
+
+```{js}
+$(function() {
+  $(".level2").css('visibility', 'hidden');
+  $(".level2").first().css('visibility', 'visible');
+  $(".container-fluid").height($(".container-fluid").height() + 300);
+  $(window).on('scroll', function() {
+    $('h2').each(function() {
+      var h2Top = $(this).offset().top - $(window).scrollTop();
+      var windowHeight = $(window).height();
+      if (h2Top >= 0 && h2Top <= windowHeight / 2) {
+        $(this).parent('div').css('visibility', 'visible');
+      } else if (h2Top > windowHeight / 2) {
+        $(this).parent('div').css('visibility', 'hidden');
+      }
+    });
+  });
+})
+```
+
+```{css}
+.figcaption {display: none}
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap');
+body{
+  background-image: linear-gradient(#FEF9FF, #736CED);
+  
+  font-family: "Red Hat Display", sans-serif;
+}
+h1{
+  font-family: "Abril Fatface", serif;
+}
+img{  
+  border-style: solid;
+  border-width: 5px;
+  border-color: #074F57; 
+}
+
+p {
+  font-size: 17px;
+}
+```
+
+## What's going on with this data?
+
+As an avid user of public transport, I wanted to figure out the effects of different variables on how late the public transport was. From this information I can hopefully have better judgement on If I should sleep that extra minute or not.
+
+(please note: not all data came from me, I had help from friends and my sister)
+
+## How late public Transport is in general
+The first thing I wanted to know is how on time the public transport system is in general. 
+
+![A bar chart showing how late Transport is ](plot1.png)
+From this I found that the delay in this part of the year was much better than from when I did this in March, also that our mean amount of delay is 1.2 minutes.
+
+However for my quest of perfecting the least amount of wait time at a bus stop, this doesn't tell me enough.
+
+So what else could effect Public Transport tardiness?
+
+## Does the day of the week effect delay?
+
+I wanted to know if I traveled on a Friday, would there be more likely of a delay compared to a Tuesday. Since I think people are more likely to stay and work from home on a Friday I believed that there would be more delay on the middle days
+
+![A bar chart showing the averages of delay depending on day of week](plot2.png)
+
+Well, not exactly what I was expecting, but there does seem to be more delay on the middle days compared to the end days.
+
+I take public transport all times of the day, would that effect the delay?
+
+## Does the time you Travel Impact the delay
+
+With the morning and evening rush I expected there to be some effect on the delay
+
+![A density graph of the time of day and delay](plot3.png)
+
+As I expected, There is definitely an effect on the delay from what times it was taken, however I definitely thought there would be more of a effect.
+
+Would the route I take have an effect?
+
+## Effect of route on Delay
+
+Since different routes experience different conditions would that impact there tardiness? 
+
+
+![A scatter graph of the delay of different routes I took](plot4.png)
+So there is an impact on delay depending on what routes taken. 
+
+But most importantly did I enjoy myself?
+
+## Top thoughts on Public Transport
+
+![Top ten words I used to describe my time taking public Transport](plot5.png)
+Seems pretty hot or cold... I obviously didn't have the best of times.
+
+
+
